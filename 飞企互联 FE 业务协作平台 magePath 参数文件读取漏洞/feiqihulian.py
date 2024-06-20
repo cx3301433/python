@@ -1,5 +1,5 @@
 import re,argparse,sys,requests
-from multiprocessing import Pool
+from multiprocessing.dummy import Pool
 requests.packages.urllib3.disable_warnings()
 
 
