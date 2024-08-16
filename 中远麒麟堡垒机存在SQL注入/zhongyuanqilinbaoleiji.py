@@ -18,7 +18,7 @@ def banner():
 def main():
     banner() # banner
     # 处理命令行参数了
-    parser = argparse.ArgumentParser(description="CVE-2024-32640_poc")
+    parser = argparse.ArgumentParser(description="中远麒麟堡垒机存在SQL注入")
     # 添加两个参数
     parser.add_argument('-u','--url',dest='url',type=str,help='input link')
     parser.add_argument('-f','--file',dest='file',type=str,help='file path')
